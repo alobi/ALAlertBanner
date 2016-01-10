@@ -40,35 +40,67 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+
+    [[ALAlertBanner appearance] setDrawsGradient:@NO];
+    [[ALAlertBanner appearance] setDrawsStrokes:@NO];
+    [[ALAlertBanner appearance] setShadowRadius:@0.f];
+    [[ALAlertBanner appearance] setSuccessFillColor:[UIColor colorWithRed:0/255.f green:200/255.f blue:175/255.f alpha:.5f]];
+    [[ALAlertBanner appearance] setFailureFillColor:[UIColor colorWithRed:255/255.f green:45/255.f blue:85/255.f alpha:.6f]];
+    [[ALAlertBanner appearance] setWarningFillColor:[UIColor colorWithWhite:1.f alpha:.5f]];
+    [[ALAlertBanner appearance] setNotifyFillColor:[UIColor colorWithWhite:1.f alpha:.5f]];
+
+    [[ALAlertBanner appearance] setNotifyTitleTextAttributes:@{
+                                                                NSFontAttributeName : [UIFont fontWithName:@"HelveticaNeue-Medium" size:17.f],
+                                                                NSForegroundColorAttributeName : [UIColor colorWithWhite:0.f alpha:1.f]
+                                                                }];
+
+    [[ALAlertBanner appearance] setNotifySubtitleTextAttributes:@{
+                                                                  NSFontAttributeName : [UIFont fontWithName:@"HelveticaNeue" size:15.f],
+                                                                  NSForegroundColorAttributeName : [UIColor colorWithWhite:0.f alpha:0.8f]
+                                                               }];
+
+    [[ALAlertBanner appearance] setWarningTitleTextAttributes:@{
+                                                               NSFontAttributeName : [UIFont fontWithName:@"HelveticaNeue-Medium" size:17.f],
+                                                               NSForegroundColorAttributeName : [UIColor colorWithWhite:0.f alpha:1.f]
+                                                               }];
+
+    [[ALAlertBanner appearance] setWarningSubtitleTextAttributes:@{
+                                                                  NSFontAttributeName : [UIFont fontWithName:@"HelveticaNeue" size:15.f],
+                                                                  NSForegroundColorAttributeName : [UIColor colorWithWhite:0.f alpha:0.8f]
+                                                                  }];
+
 	// Do any additional setup after loading the view.
-    
+
     self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Hide All" style:UIBarButtonItemStyleBordered target:[ALAlertBanner class] action:@selector(hideAllAlertBanners)];
     self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Table" style:UIBarButtonItemStyleBordered target:self action:@selector(push)];
-    
+
     self.view.backgroundColor = [UIColor colorWithRed:243/255.0 green:247/255.0 blue:249/255.0 alpha:1.f];
-    
+
     _secondsToShow = 3.5;
     _showAnimationDuration = 0.25;
     _hideAnimationDuration = 0.2;
-        
+
     self.topButton = [UIButton buttonWithType:UIButtonTypeRoundedRect];
     self.topButton.tag = ALAlertBannerPositionTop;
+    [self.topButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
     [self.topButton setTitle:@"Top" forState:UIControlStateNormal];
     [self.topButton addTarget:self action:@selector(showAlertBannerInView:) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:self.topButton];
-    
+
     self.bottomButton = [UIButton buttonWithType:UIButtonTypeRoundedRect];
     self.bottomButton.tag = ALAlertBannerPositionBottom;
+    [self.bottomButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
     [self.bottomButton setTitle:@"Bottom" forState:UIControlStateNormal];
     [self.bottomButton addTarget:self action:@selector(showAlertBannerInView:) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:self.bottomButton];
-    
+
     self.underNavButton = [UIButton buttonWithType:UIButtonTypeRoundedRect];
     self.underNavButton.tag = ALAlertBannerPositionUnderNavBar;
+    [self.underNavButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
     [self.underNavButton setTitle:@"UIWindow" forState:UIControlStateNormal];
     [self.underNavButton addTarget:self action:@selector(showAlertBannerInWindow:) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:self.underNavButton];
-    
+
     self.secondsToShowSlider = [[UISlider alloc] init];
     self.secondsToShowSlider.continuous = YES;
     self.secondsToShowSlider.minimumValue = 0.f;
@@ -77,14 +109,14 @@
     [self.secondsToShowSlider addTarget:self action:@selector(secondsToShowSlider:) forControlEvents:UIControlEventValueChanged];
     [self.secondsToShowSlider addTarget:self action:@selector(secondsToShowSliderTouchEnded:) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:self.secondsToShowSlider];
-    
+
     self.secondsToShowLabel = [[UILabel alloc] init];
     self.secondsToShowLabel.backgroundColor = [UIColor clearColor];
     self.secondsToShowLabel.font = [UIFont systemFontOfSize:10.f];
     self.secondsToShowLabel.text = @"Seconds to show: 3.5 seconds";
     self.secondsToShowLabel.textAlignment = NSTextAlignmentCenter;
     [self.view addSubview:self.secondsToShowLabel];
-    
+
     self.animationDurationSlider = [[UISlider alloc] init];
     self.animationDurationSlider.continuous = YES;
     self.animationDurationSlider.minimumValue = 0.01f;
@@ -100,6 +132,10 @@
     self.animationDurationLabel.text = @"Animation duration: 0.25 seconds";
     self.animationDurationLabel.textAlignment = NSTextAlignmentCenter;
     [self.view addSubview:self.animationDurationLabel];
+
+    UIImageView *imageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"background1.jpg"]];
+    [self.view insertSubview:imageView atIndex:0];
+
 }
 
 - (void)viewWillAppear:(BOOL)animated {
@@ -116,7 +152,7 @@
     self.topButton.frame = CGRectMake(20, self.view.frame.size.height/2 - 80.f, (self.view.frame.size.width - 40.f)/3, 40.f);
     self.bottomButton.frame = CGRectMake(self.topButton.frame.origin.x + self.topButton.frame.size.width, self.topButton.frame.origin.y, self.topButton.frame.size.width, self.topButton.frame.size.height);
     self.underNavButton.frame = CGRectMake(self.bottomButton.frame.origin.x + self.bottomButton.frame.size.width, self.topButton.frame.origin.y, self.topButton.frame.size.width, self.topButton.frame.size.height);
-    
+
     self.secondsToShowSlider.frame = CGRectMake(self.topButton.frame.origin.x, self.topButton.frame.origin.y + self.topButton.frame.size.height + 20.f, self.view.frame.size.width - 40.f, 20.f);
     self.secondsToShowLabel.frame = CGRectMake(self.secondsToShowSlider.frame.origin.x, self.secondsToShowSlider.frame.origin.y + self.secondsToShowSlider.frame.size.height, self.secondsToShowSlider.frame.size.width, 20.f);
     self.animationDurationSlider.frame = CGRectMake(self.secondsToShowSlider.frame.origin.x, self.secondsToShowLabel.frame.origin.y + self.secondsToShowLabel.frame.size.height + 20.f, self.view.frame.size.width - 40.f, 20.f);
